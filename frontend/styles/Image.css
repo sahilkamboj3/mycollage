@@ -1,0 +1,54 @@
+.outerDivStyle {
+  z-index: 1;
+  position: absolute;
+  cursor: grab;
+  /*border: 2px red solid;*/
+}
+.outerDivStyle:active {
+  cursor: grabbing;
+}
+
+.innerDivStyle {
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+.imageStyle {
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+}
+
+.resizer {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  background: green;
+  z-index: 2;
+}
+
+.ne {
+  top: -2px;
+  right: -2px;
+  cursor: ne-resize;
+}
+
+.nw {
+  top: -2px;
+  left: -2px;
+  cursor: nw-resize;
+}
+
+.sw {
+  bottom: -2px;
+  left: -2px;
+  cursor: sw-resize;
+}
+
+.se {
+  bottom: -2px;
+  right: -2px;
+  cursor: se-resize;
+}
