@@ -1,20 +1,18 @@
-//import { BrowserRouter as Router } from "react-router-dom";
-//import Route from "react-router-dom/Route";
-//import { useHistory } from "react-router-dom";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { Box, Typography, Button } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import FormInput from "./util/components/FormInput";
 
 const Login = () => {
-  // url history
-  //  const history = useHistory();
-  //
+  const router = useRouter();
+
   // state variables
   const [errors, setErrors] = useState<string[]>([]);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [verifying, setVerifying] = useState<boolean>(false);
 
   const inputTypes = ["email", "password"];
   const inputLabels = ["Email", "Password"];
@@ -22,7 +20,8 @@ const Login = () => {
   const setValues = [setEmail, setPassword];
 
   const loginAccount = () => {
-    setErrors(["Verifying information..."]);
+    setErrors([]);
+    setVerifying(true);
     fetch("http://localhost:5000/accounts/login", {
       method: "POST",
       credentials: "include",
@@ -33,8 +32,8 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data["errors"]) {
+          setVerifying(false);
           let newErrors: string[] = [];
           data["errors"].map((error: { [x: string]: string }) =>
             newErrors.push(error["message"])
@@ -42,6 +41,7 @@ const Login = () => {
           setErrors(newErrors);
         } else {
           setErrors([]);
+          router.push(`/projects/${data["accounts"][0].uuid}`);
         }
       });
   };
@@ -52,33 +52,43 @@ const Login = () => {
   };
 
   return (
-    <Box>
-      <Typography variant="h2">Log In</Typography>
-      <form method="POST" onSubmit={handleSubmit}>
-        {inputTypes.map((inputType, i) => (
-          <FormInput
-            key={inputLabels[i]}
-            id={`${inputLabels[i].toLowerCase()}-input`}
-            inputLabel={inputLabels[i]}
-            inputType={inputType}
-            isRequired={true}
-            value={values[i]}
-            setValue={setValues[i]}
-          />
-        ))}
-        <Button variant="contained" color="primary" type="submit">
-          Log In
-        </Button>
-        {errors.map((error) => (
-          <Alert key={error} severity="error">
-            {error}
-          </Alert>
-        ))}
-      </form>
-      <Link href="/signup">
-        <a>Create Account</a>
-      </Link>
-    </Box>
+    <div className="wrapper signup">
+      <div className="content">
+        <Box>
+          <Typography variant="h2">Log In</Typography>
+          <form method="POST" onSubmit={handleSubmit}>
+            {inputTypes.map((inputType, i) => (
+              <FormInput
+                key={inputLabels[i]}
+                id={`${inputLabels[i].toLowerCase()}-input`}
+                inputLabel={inputLabels[i]}
+                inputType={inputType}
+                isRequired={true}
+                value={values[i]}
+                setValue={setValues[i]}
+              />
+            ))}
+            <Button variant="contained" color="primary" type="submit">
+              Log In
+            </Button>
+            {errors.length > 0
+              ? errors.map((error) => (
+                  <Alert key={error} severity="error">
+                    {error}
+                  </Alert>
+                ))
+              : verifying && (
+                  <Alert key={"Verifying"}>Verifying information...</Alert>
+                )}
+          </form>
+
+          <Link href="/signup">
+            <a>Create Account</a>
+          </Link>
+        </Box>
+      </div>
+      <div className="svg"></div>
+    </div>
   );
 };
 

@@ -2,6 +2,7 @@
   "/_app": "pages/_app.js",
   "/_document": "pages/_document.js",
   "/_error": "pages/_error.js",
-  "/login": "pages/login.js",
-  "/collages": "pages/collages.js"
+  "/signup": "pages/signup.js",
+  "/projects/[userUUID]": "pages/projects/[userUUID].js",
+  "/login": "pages/login.js"
 }

@@ -20,10 +20,8 @@ const accountApi = async (
   accountRouter.use((req: Request, res: Response, next) => {
     let isValidUrl =
       req.originalUrl != "/accounts/login" &&
+      req.originalUrl != "/accounts/getAll" &&
       req.originalUrl != "/accounts/create";
-
-    console.log("authentication:");
-    console.log(req.session);
 
     if (isValidUrl && (!req.session || !req.session.userUUID)) {
       let error: ErrorType = {
@@ -34,11 +32,30 @@ const accountApi = async (
 
       res.json({
         errors: [error],
-        status: 404,
+        isAuthorized: false,
+        status: 200,
       } as apiResType);
       return;
     }
     next();
+  });
+
+  // return if authorized or exists
+  accountRouter.get("/authorize", (_req: Request, res: Response) => {
+    const response: apiResType = {
+      isAuthorized: true,
+      status: 200,
+    };
+    res.json(response);
+  });
+
+  // get userUUID
+  accountRouter.get("/getUserUUID", (req: Request, res: Response) => {
+    const response: apiResType = {
+      accounts: [{ uuid: req.session.userUUID } as Account],
+      status: 200,
+    };
+    res.json(response);
   });
 
   // get all
@@ -90,10 +107,6 @@ const accountApi = async (
     }
 
     res.send(response);
-  });
-
-  accountRouter.get("/retrieveUUID", (req: Request, res: Response) => {
-    res.json(req.session);
   });
 
   // login account

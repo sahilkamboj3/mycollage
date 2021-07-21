@@ -2,14 +2,13 @@
   z-index: 1;
   position: absolute;
   cursor: grab;
-  /*border: 2px red solid;*/
 }
+
 .outerDivStyle:active {
   cursor: grabbing;
 }
 
 .innerDivStyle {
-  position: absolute;
   z-index: 2;
   width: 100%;
   height: 100%;
@@ -27,6 +26,29 @@
   height: 11px;
   background: green;
   z-index: 2;
+}
+
+.zIndexBtn {
+  width: 17.5px;
+  height: 17.5px;
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  display: flex;
+  background: black;
+  color: white;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.zIndexBtnLeft {
+  left: -5px;
+}
+
+.zIndexBtnRight {
+  right: -5px;
 }
 
 .ne {

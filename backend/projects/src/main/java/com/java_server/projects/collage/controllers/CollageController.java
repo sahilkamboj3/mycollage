@@ -4,16 +4,25 @@ import com.java_server.projects.collage.lib.CollageRepo;
 import com.java_server.projects.collage.models.Collage;
 import com.java_server.projects.util.ProjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+// import javax.servlet.http.HttpSession;
+// import javax.servlet.http.Cookie;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = { "*" })
 @RequestMapping("/collage/")
+@Validated
 public class CollageController {
     @Autowired
     private CollageRepo collageRepo;
@@ -25,6 +34,7 @@ public class CollageController {
         return this.collageRepo.findAll();
     }
 
+    // get specific collage
     @GetMapping("getOne/{id}")
     public Collage getOne(@PathVariable(value = "id") int id) throws ProjectNotFoundException {
         Collage collage = this.collageRepo.findById(id).orElseThrow(
@@ -32,17 +42,23 @@ public class CollageController {
         return collage;
     }
 
+    // get collages based on userUUID
     @GetMapping("getAll/{id}")
     public Optional<List<Collage>> getAllOnUserUUID(@PathVariable(value = "id") String userUUID) {
-        System.out.println("userUUID: " + userUUID);
-        Optional<List<Collage>> collages = this.collageRepo.findCollageByUserUUID(userUUID);
+        Optional<List<Collage>> collages = this.collageRepo.findCollagesByUserUUID(userUUID);
         return collages;
     }
 
     // post mappings
     @PostMapping("create")
-    public Collage createCollage(@Validated @RequestBody Collage collage) {
-        return this.collageRepo.save(collage);
+    public ResponseEntity<Collage> createCollage(@Validated @RequestBody Collage collage, HttpServletRequest request) {
+        // set collage uuid
+        UUID uuid = UUID.randomUUID();
+        collage.setProjectUUID(uuid.toString());
+
+        Collage resCollage = this.collageRepo.save(collage);
+
+        return ResponseEntity.ok().body(resCollage);
     }
 
     // put mappings

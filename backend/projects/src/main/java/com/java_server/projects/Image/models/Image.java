@@ -4,24 +4,32 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+
+// import org.hibernate.annotations.ColumnDefault;
+// import org.springframework.beans.factory.annotation.Value;
 
 @Entity
+@Table(name = "images")
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int imageID;
-    private long imageUUID;
-    private long projectUUID; // reference to project
-    private int rot;
-    private int posX;
-    private int posY;
-    private int height;
-    private int width;
+    private String imageUUID;
+    private String projectUUID; // reference to project
+    private double rot;
+    private double posX;
+    private double posY;
+    private double height;
+    private double width;
+    private int zIndex = 1;
     private String imageURL;
 
-    public Image() {};
+    public Image() {
+    };
 
-    public Image(int imageID, long imageUUID, long projectUUID, int rot, int posX, int posY, int height, int width, String imageURL) {
+    public Image(int imageID, String imageUUID, String projectUUID, double rot, double posX, double posY, double height,
+            double width, String imageURL) { // without zIndex
         this.imageID = imageID;
         this.imageUUID = imageUUID;
         this.projectUUID = projectUUID;
@@ -33,9 +41,31 @@ public class Image {
         this.imageURL = imageURL;
     }
 
+    public Image(int imageID, String imageUUID, String projectUUID, double rot, double posX, double posY, double height,
+            double width, String imageURL, int zIndex) {
+        this.imageID = imageID;
+        this.imageUUID = imageUUID;
+        this.projectUUID = projectUUID;
+        this.rot = rot;
+        this.posX = posX;
+        this.posY = posY;
+        this.height = height;
+        this.width = width;
+        this.imageURL = imageURL;
+        this.zIndex = zIndex;
+    }
+
     @Override
     public String toString() {
-        return String.format("Image[imageID=%imageID, projectUUID=%projectUUID]", this.imageID,this.projectUUID);
+        return String.format("Image[imageID=%imageID, projectUUID=%projectUUID]", this.imageID, this.projectUUID);
+    }
+
+    public int getZIndex() {
+        return zIndex;
+    }
+
+    public void setZIndex(int zIndex) {
+        this.zIndex = zIndex;
     }
 
     public int getImageID() {
@@ -46,51 +76,51 @@ public class Image {
         this.imageID = imageID;
     }
 
-    public long getProjectUUID() {
+    public String getProjectUUID() {
         return projectUUID;
     }
 
-    public void setProjectUUID(long projectUUID) {
+    public void setProjectUUID(String projectUUID) {
         this.projectUUID = projectUUID;
     }
 
-    public int getRot() {
+    public double getRot() {
         return rot;
     }
 
-    public void setRot(int rot) {
+    public void setRot(double rot) {
         this.rot = rot;
     }
 
-    public int getPosX() {
+    public double getPosX() {
         return posX;
     }
 
-    public void setPosX(int posX) {
+    public void setPosX(double posX) {
         this.posX = posX;
     }
 
-    public int getPosY() {
+    public double getPosY() {
         return posY;
     }
 
-    public void setPosY(int posY) {
+    public void setPosY(double posY) {
         this.posY = posY;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(double width) {
         this.width = width;
     }
 
@@ -102,11 +132,12 @@ public class Image {
         this.imageURL = imageURL;
     }
 
-    public long getImageUUID() {
+    public String getImageUUID() {
         return imageUUID;
     }
 
-    public void setImageUUID(long imageUUID) {
+    public void setImageUUID(String imageUUID) {
         this.imageUUID = imageUUID;
     }
+
 }

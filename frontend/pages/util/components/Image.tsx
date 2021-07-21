@@ -1,9 +1,11 @@
-import { useState, useRef } from "react";
-import { MutableRefObject, Fragment } from "react";
+import { useState, useRef, useEffect } from "react";
+import { UpdateImageFuncInterface } from "../../interfaces";
+import { io } from "socket.io-client";
 
 import { ImageInterface } from "../interfaces";
 
 const Image: React.FC<ImageInterface> = ({
+  id,
   uuid, // if negative, then this is a new image and register it as such
   url,
   xPos,
@@ -11,14 +13,23 @@ const Image: React.FC<ImageInterface> = ({
   rot,
   width,
   height,
+  zIndex,
   leftBound,
   rightBound,
   topBound,
   bottomBound,
+  screenWidth,
+  screenHeight,
 }) => {
+  // websockets client
+  const socket = io("http://localhost:5001");
+  socket.on("connect", () => {});
+  socket.on("disconnect", () => {});
+
   const draggableRef = useRef<HTMLDivElement>(undefined);
   let prevX, prevY;
 
+  const [myZIndex, setMyZIndex] = useState<number>(Math.max(1, zIndex));
   const values = {
     curXPos: xPos,
     curYPos: yPos,
@@ -28,27 +39,12 @@ const Image: React.FC<ImageInterface> = ({
   };
 
   const valueRef = useRef(values);
-
-  // everything is dealt as percents to deal with various screen sizes
-  const handleData = (draggableRef: MutableRefObject<undefined>) => {
-    if (draggableRef.current !== undefined) {
-      const x =
-        draggableRef.current.getBoundingClientRect().left / screen.width;
-      const y =
-        draggableRef.current.getBoundingClientRect().top / screen.height;
-      const height =
-        draggableRef.current.getBoundingClientRect().height / screen.height;
-      const width =
-        draggableRef.current.getBoundingClientRect().width / screen.width;
-      const rot = 0;
-      // make api call here
-    }
-  };
-
   const [isResizing, setIsResizing] = useState<boolean>(false);
+  let imageUpdated: boolean = false;
 
   // southwest
   const swOnMouseDown = (e) => {
+    imageUpdated = true;
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -86,6 +82,7 @@ const Image: React.FC<ImageInterface> = ({
 
   // southeast
   const seOnMouseDown = (e) => {
+    imageUpdated = true;
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -119,6 +116,7 @@ const Image: React.FC<ImageInterface> = ({
 
   // northeast
   const neOnMouseDown = (e) => {
+    imageUpdated = true;
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -154,6 +152,7 @@ const Image: React.FC<ImageInterface> = ({
 
   // northwest
   const nwOnMouseDown = (e) => {
+    imageUpdated = true;
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -191,6 +190,7 @@ const Image: React.FC<ImageInterface> = ({
 
   // dragging
   const dragOnMouseDown = (e) => {
+    imageUpdated = true;
     if (!isResizing) {
       window.addEventListener("mousemove", dragMouseMove);
       window.addEventListener("mouseup", dragMouseUp);
@@ -224,22 +224,103 @@ const Image: React.FC<ImageInterface> = ({
     }
   };
 
+  const updateImage = ({
+    id,
+    width,
+    height,
+    x,
+    y,
+    rot,
+  }: UpdateImageFuncInterface) => {
+    const updatedImage = {
+      imageID: id,
+      width,
+      height,
+      posX: x,
+      posY: y,
+      rot,
+      zindex: myZIndex,
+    };
+    socket.emit("PUT/image", updatedImage);
+  };
+
+  // calling websockets everytime
+  const intervalLength: number = 2000;
+  const putInterval = setInterval(() => {
+    if (imageUpdated) {
+      const rect = draggableRef.current.getBoundingClientRect();
+      const input: UpdateImageFuncInterface = {
+        id,
+        width: rect.width / screenWidth,
+        height: rect.height / screenHeight,
+        x: rect.left / screenWidth,
+        y: rect.top / screenHeight,
+        rot,
+      };
+      updateImage(input);
+      imageUpdated = false;
+    }
+  }, intervalLength);
+
+  let styles;
+  if (valueRef.current.curWidth == -1 || valueRef.current.curWidth == -1) {
+    styles = {
+      position: "absolute",
+      left: `${Math.max(valueRef.current.curXPos * screenWidth, leftBound)}px`,
+      top: `${Math.max(topBound, valueRef.current.curYPos * screenHeight)}px`,
+    };
+  } else {
+    styles = {
+      position: "absolute",
+      width: `${valueRef.current.curWidth * screenWidth}px`,
+      height: `${valueRef.current.curHeight * screenHeight}px`,
+      left: `${Math.max(valueRef.current.curXPos * screenWidth, leftBound)}px`,
+      top: `${Math.max(topBound, valueRef.current.curYPos * screenHeight)}px`,
+    };
+  }
+  styles.zIndex = myZIndex;
+
+  const [presignedUrl, setPresignedUrl] = useState<string>("");
+  useEffect(() => {
+    fetch("http://localhost:8080/images/getPresignedUrl", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setPresignedUrl(data["url"]);
+      });
+  }, []);
+
+  const incrementZIndex = () => {
+    setMyZIndex(myZIndex + 1);
+  };
+  const decrementZIndex = () => {
+    setMyZIndex(Math.max(1, myZIndex - 1));
+  };
+
   return (
     <div
       ref={draggableRef}
       className="outerDivStyle"
       onMouseDown={dragOnMouseDown}
-      style={{
-        width: valueRef.current.curWidth,
-        height: valueRef.current.curHeight,
-      }}
+      style={styles}
     >
-      <div className="innerDivStyle"></div>
-      <img src={url} className="imageStyle" />
+      <div className="innerDivStyle " style={{ position: "absolute" }} />
+      <img src={presignedUrl} className="imageStyle" />
       <div className="resizer ne" onMouseDown={neOnMouseDown}></div>
       <div className="resizer sw" onMouseDown={swOnMouseDown}></div>
       <div className="resizer se" onMouseDown={seOnMouseDown}></div>
       <div className="resizer nw" onMouseDown={nwOnMouseDown}></div>
+      <div className="zIndexBtn zIndexBtnLeft" onClick={incrementZIndex}>
+        +
+      </div>
+      <div className="zIndexBtn zIndexBtnRight" onClick={decrementZIndex}>
+        -
+      </div>
     </div>
   );
 };

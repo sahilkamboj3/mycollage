@@ -1,11 +1,9 @@
-import { Fragment } from "react";
+import { useContext, createContext } from "react";
 
 const Home = () => {
-  return (
-    <Fragment>
-      <h1>Home</h1>
-    </Fragment>
-  );
+  const LoginContext = createContext(true);
+
+  return <h1>Home</h1>;
 };
 
 export default Home;

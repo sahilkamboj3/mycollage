@@ -23,5 +23,6 @@ export interface verifyEmailType {
 export interface apiResType {
   accounts?: Account[];
   errors?: ErrorType[];
+  isAuthorized?: boolean;
   status: number;
 }

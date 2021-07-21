@@ -1,6 +1,5 @@
 import {
   buildMakeAccountInputType,
-  // accountType,
   verifyEmailType,
   makeAccountReturnType,
 } from "../interfaces";

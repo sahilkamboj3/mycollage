@@ -1,26 +1,86 @@
-import axios from "axios";
-import { getCookieValue } from "../util/logic";
-import { CollageInterface } from "../interfaces";
+import { CollageInterface, ServerSideCollageInterface } from "../interfaces";
+import { prerenderAuthorizationCheck } from "../util/logic";
+
+import { useState } from "react";
+import { Modal } from "@material-ui/core";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
-const Collages = ({ collages }) => {
-  const userUUID = getCookieValue("userUUID");
-  console.log(userUUID);
-  console.log(typeof userUUID);
+import ProjectForm from "./ProjectForm";
 
-  console.log(collages);
-  return <div>Your Collages</div>;
-};
+const Projects = ({ collages }) => {
+  // model variables
+  const [open, setOpen] = useState<boolean>(false);
 
-export async function getStaticProps() {
+  // get userUUID
   const router = useRouter();
   const { userUUID } = router.query;
-  //  const userUUID = getCookieValue("userUUID");
-  //  const userUUID = "ee59f59d-3d5f-40f3-9cd8-353e1c92dc76";
-  //  console.log(userUUID);
 
-  const res = await fetch(`http://localhost:8080/collage/getAll/${userUUID}`);
-  const collages = await res.json();
+  prerenderAuthorizationCheck(router);
+
+  return (
+    <div>
+      <h1>Your Collages - {collages.length}</h1>
+
+      {collages.length < 1 && <h1>Create your first collage</h1>}
+
+      {collages.map((collage: CollageInterface) => (
+        <Link
+          key={collage.uuid}
+          href={`http://localhost:3000/collages/${collage.uuid}`}
+        >
+          <a>
+            <p key={collage.uuid}>{collage.projectName}</p>
+          </a>
+        </Link>
+      ))}
+
+      <button
+        type="button"
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        Open Modal
+      </button>
+      <Modal
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        {/* seems to be giving some children error */}
+        <ProjectForm userUUID={userUUID} />
+      </Modal>
+    </div>
+  );
+};
+
+export async function getServerSideProps(context) {
+  // fetch request for collages
+  let collages: CollageInterface[];
+  await fetch(
+    `http://localhost:8080/collage/getAll/${context.params.userUUID}`,
+    {
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      collages = data.map((collage: ServerSideCollageInterface) => {
+        return {
+          id: collage.projectID,
+          uuid: collage.projectUUID,
+          userUUID: collage.accountUUID,
+          projectName: collage.projectName,
+        } as CollageInterface;
+      });
+    });
 
   return {
     props: {
@@ -29,25 +89,4 @@ export async function getStaticProps() {
   };
 }
 
-export async function getStaticPaths() {
-  const res = await fetch("http://localhost:5000/accounts/getAll");
-  const data = await res.json();
-
-  const accounts = data["accounts"];
-
-  //  const paths = {
-  //    params: { id: userUUID },
-  //  };
-
-  const paths = accounts.map((account) => ({
-    params: { userUUID: account.uuid },
-  }));
-  //
-  //    return {
-  //
-  //    }
-
-  return { paths, fallback: false };
-}
-
-export default Collages;
+export default Projects;

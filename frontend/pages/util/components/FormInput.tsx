@@ -4,7 +4,7 @@ import {
   Input,
   FormHelperText,
 } from "@material-ui/core";
-import React from "react";
+import React, { Fragment } from "react";
 
 import FormInputInterface from "../../interfaces";
 
@@ -24,20 +24,23 @@ const FormInput: React.FC<FormInputInterface> = ({
   };
 
   return (
-    <FormControl id="formcontrol">
-      <InputLabel htmlFor="input" aria-describedby="helper-text">
-        {inputLabel}
-      </InputLabel>
-      <Input
-        id={id}
-        required={isRequired}
-        type={inputType}
-        value={value}
-        onChange={handleValueChange}
-        fullWidth={true}
-      />
-      <FormHelperText id="helper-text">{helperText}</FormHelperText>
-    </FormControl>
+    <Fragment>
+      <FormControl id="formcontrol">
+        <InputLabel htmlFor="input" aria-describedby="helper-text">
+          {inputLabel}
+        </InputLabel>
+        <Input
+          id={id}
+          required={isRequired}
+          type={inputType}
+          value={value}
+          onChange={handleValueChange}
+          fullWidth={true}
+        />
+        <FormHelperText id="helper-text">{helperText}</FormHelperText>
+      </FormControl>
+      <br />
+    </Fragment>
   );
 };
 

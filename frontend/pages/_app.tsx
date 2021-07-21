@@ -5,6 +5,7 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../src/theme";
 import "../styles/Image.css";
+import "../styles/Account.css";
 import { CookiesProvider } from "react-cookie";
 
 export default function MyApp(props) {

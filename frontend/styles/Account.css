@@ -1,0 +1,26 @@
+.wrapper {
+  display: flex;
+}
+
+.login {
+  flex-direction: row;
+}
+
+.signup {
+  flex-direction: row-reverse;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 50vw;
+  height: 100vh;
+  padding-top: 20vh;
+  align-items: center;
+}
+
+.svg {
+  width: 50vw;
+  background-image: url("../public/login.svg");
+  height: 100vh;
+}
