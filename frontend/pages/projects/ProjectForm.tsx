@@ -51,7 +51,7 @@ const ProjectForm = ({ userUUID }) => {
   };
 
   return (
-    <div>
+    <div className="wrapper collageForm">
       <h1>Collage Form</h1>
       <form method="POST" onSubmit={handleSubmit}>
         {inputTypes.map((inputType, i) => (
@@ -65,7 +65,8 @@ const ProjectForm = ({ userUUID }) => {
             setValue={setValues[i]}
           />
         ))}
-
+        <br />
+        <br />
         <Button
           disabled={!isFormValid}
           variant="contained"
@@ -74,7 +75,11 @@ const ProjectForm = ({ userUUID }) => {
         >
           Start Collage
         </Button>
+        <br />
+        <br />
         {creating && <Alert>Creating collage...</Alert>}
+        <br />
+        <br />
         {!isAuthorized && (
           <Alert severity="error">
             You are logged out. We are taking you back to the login page.

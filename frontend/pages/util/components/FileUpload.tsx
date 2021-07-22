@@ -2,7 +2,8 @@ import { Box, Button } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { useState } from "react";
 import axios from "axios";
-import { getUserUUID } from "../logic";
+import { getUserUUID, prerenderAuthorizationCheck } from "../logic";
+import { useRouter } from "next/router";
 
 const FileUpload = ({ collageUUID }) => {
   let errorText = "File type not valid";

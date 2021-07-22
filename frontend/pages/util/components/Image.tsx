@@ -245,7 +245,7 @@ const Image: React.FC<ImageInterface> = ({
   };
 
   // calling websockets everytime
-  const intervalLength: number = 2000;
+  const intervalLength: number = 1000;
   const putInterval = setInterval(() => {
     if (imageUpdated) {
       const rect = draggableRef.current.getBoundingClientRect();
@@ -296,9 +296,11 @@ const Image: React.FC<ImageInterface> = ({
   }, []);
 
   const incrementZIndex = () => {
+    imageUpdated = true;
     setMyZIndex(myZIndex + 1);
   };
   const decrementZIndex = () => {
+    imageUpdated = true;
     setMyZIndex(Math.max(1, myZIndex - 1));
   };
 

@@ -60,6 +60,7 @@ export interface UpdateImageFuncInterface {
   x: number;
   y: number;
   rot: number;
+  zIndex: number;
 }
 
 // server side interfaces

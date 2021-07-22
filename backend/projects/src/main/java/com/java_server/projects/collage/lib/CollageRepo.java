@@ -12,4 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface CollageRepo extends JpaRepository<Collage, Integer> {
     @Query(value = "SELECT * FROM collages WHERE accountuuid = :userUUID", nativeQuery = true)
     Optional<List<Collage>> findCollagesByUserUUID(String userUUID);
+
+    @Query(value = "SELECT project_name FROM collages WHERE projectuuid = :collageUUID", nativeQuery = true)
+    String findCollageNameByCollageUUID(String collageUUID);
 }

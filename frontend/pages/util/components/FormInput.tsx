@@ -25,7 +25,7 @@ const FormInput: React.FC<FormInputInterface> = ({
 
   return (
     <Fragment>
-      <FormControl id="formcontrol">
+      <FormControl id="formcontrol" margin="normal">
         <InputLabel htmlFor="input" aria-describedby="helper-text">
           {inputLabel}
         </InputLabel>
@@ -35,11 +35,10 @@ const FormInput: React.FC<FormInputInterface> = ({
           type={inputType}
           value={value}
           onChange={handleValueChange}
-          fullWidth={true}
+          style={{ width: 250 }}
         />
         <FormHelperText id="helper-text">{helperText}</FormHelperText>
       </FormControl>
-      <br />
     </Fragment>
   );
 };

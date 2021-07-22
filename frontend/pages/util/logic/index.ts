@@ -19,6 +19,7 @@ export const authorizeUser = async (): Promise<boolean> => {
         isAuthorized = true;
       }
     });
+  console.log(isAuthorized);
 
   return isAuthorized;
 };
@@ -39,7 +40,11 @@ export const getUserUUID = async () => {
     credentials: "include",
   })
     .then((res) => res.json())
-    .then((data) => (userUUID = data["accounts"][0].uuid));
+    .then((data) => {
+      console.log(data);
+      userUUID = data["accounts"][0].uuid;
+      console.log(userUUID);
+    });
 
   return userUUID;
 };

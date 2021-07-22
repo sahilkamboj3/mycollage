@@ -68,9 +68,13 @@ const SignUp = () => {
   return (
     <div className="wrapper login">
       <div className="content">
-        <Box>
+        <Box textAlign="center">
           <Typography variant="h2">Sign Up</Typography>
-          <form method="POST" onSubmit={handleSubmit}>
+          <form
+            method="POST"
+            onSubmit={handleSubmit}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
             {inputTypes.map((inputType, i) => (
               <Fragment>
                 <FormInput
@@ -82,26 +86,31 @@ const SignUp = () => {
                   value={values[i]}
                   setValue={setValues[i]}
                 />
-                <br />
               </Fragment>
             ))}
+
             <Button variant="contained" color="primary" type="submit">
               Sign Up
             </Button>
-            {errors.length > 0
-              ? errors.map((error) => (
-                  <Alert key={error} severity="error">
-                    {error}
-                  </Alert>
-                ))
-              : verifying && (
-                  <Alert key={"Verifying"}>Verifying information...</Alert>
-                )}
-          </form>
 
-          <Link href="/login">
-            <a>Login</a>
-          </Link>
+            <br />
+
+            <Link href="/login">
+              <Button variant="contained" color="inherit">
+                Login
+              </Button>
+            </Link>
+          </form>
+          <br />
+          {errors.length > 0
+            ? errors.map((error) => (
+                <Alert key={error} severity="error">
+                  {error}
+                </Alert>
+              ))
+            : verifying && (
+                <Alert key={"Verifying"}>Verifying information...</Alert>
+              )}
         </Box>
       </div>
       <div className="svg"></div>

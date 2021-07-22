@@ -1,8 +1,15 @@
 import { CollageInterface, ServerSideCollageInterface } from "../interfaces";
 import { prerenderAuthorizationCheck } from "../util/logic";
 
-import { useState } from "react";
-import { Modal } from "@material-ui/core";
+import React, { useState } from "react";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Modal,
+  Typography,
+} from "@material-ui/core";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
@@ -12,48 +19,96 @@ const Projects = ({ collages }) => {
   // model variables
   const [open, setOpen] = useState<boolean>(false);
 
+  console.log(collages);
+
   // get userUUID
   const router = useRouter();
   const { userUUID } = router.query;
 
   prerenderAuthorizationCheck(router);
 
+  /*
+  <Link
+    key={collage.uuid}
+    href={`http://localhost:3000/collages/${collage.uuid}`}
+  >
+    <a>
+      <p key={collage.uuid}>{collage.projectName}</p>
+    </a>
+  </Link>;
+     */
+
+  const left = "10vw";
+  const right = "10vw";
+
   return (
-    <div>
-      <h1>Your Collages - {collages.length}</h1>
+    <div className="wrapper projectsPage">
+      <div className="projectsContent">
+        <h1 style={{ paddingLeft: left }}>Your Collages - {collages.length}</h1>
 
-      {collages.length < 1 && <h1>Create your first collage</h1>}
-
-      {collages.map((collage: CollageInterface) => (
-        <Link
-          key={collage.uuid}
-          href={`http://localhost:3000/collages/${collage.uuid}`}
+        <div className="cards">
+          {collages.map((collage: CollageInterface) => (
+            <Card
+              key={collage.uuid}
+              style={{
+                background: "lightgrey",
+                paddingLeft: left,
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
+              <CardContent
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  style={{
+                    width: "50vw",
+                    marginRight: right,
+                  }}
+                >
+                  {collage.projectName}
+                </Typography>
+                <CardActions>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                    href={`http://localhost:3000/collages/${collage.uuid}`}
+                  >
+                    Edit
+                  </Button>
+                </CardActions>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Button
+          color="primary"
+          variant="contained"
+          style={{ marginLeft: left, marginTop: "2.5vh" }}
+          onClick={() => {
+            setOpen(true);
+          }}
         >
-          <a>
-            <p key={collage.uuid}>{collage.projectName}</p>
-          </a>
-        </Link>
-      ))}
+          Start New Collage
+        </Button>
 
-      <button
-        type="button"
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        Open Modal
-      </button>
-      <Modal
-        open={open}
-        onClose={() => {
-          setOpen(false);
-        }}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
-        {/* seems to be giving some children error */}
-        <ProjectForm userUUID={userUUID} />
-      </Modal>
+        <Modal
+          open={open}
+          onClose={() => {
+            setOpen(false);
+          }}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+          {/* seems to be giving some children error */}
+          <ProjectForm userUUID={userUUID} />
+        </Modal>
+      </div>
     </div>
   );
 };

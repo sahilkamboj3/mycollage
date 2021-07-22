@@ -42,6 +42,19 @@ public class CollageController {
         return collage;
     }
 
+    // get specific collage name
+    @GetMapping("collageName/{collageUUID}")
+    public HashMap<String, String> getCollageName(@PathVariable(value = "collageUUID") String collageUUID)
+            throws ProjectNotFoundException {
+        String collageName = this.collageRepo.findCollageNameByCollageUUID(collageUUID);
+        System.out.println(collageName);
+        HashMap<String, String> res = new HashMap<String, String>();
+        res.put("collageName", collageName);
+        System.out.println(res);
+        return res;
+        // return ResponseEntity.ok().body(collageName);
+    }
+
     // get collages based on userUUID
     @GetMapping("getAll/{id}")
     public Optional<List<Collage>> getAllOnUserUUID(@PathVariable(value = "id") String userUUID) {
