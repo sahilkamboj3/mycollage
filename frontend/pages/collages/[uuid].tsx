@@ -1,4 +1,9 @@
-import { Box, Button } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  createMuiTheme,
+  MuiThemeProvider,
+} from "@material-ui/core";
 import { useRouter } from "next/router";
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
@@ -8,6 +13,7 @@ import Image from "../util/components/Image";
 import { ImageInterface, ServerSideImageInterface } from "../interfaces";
 import { getUserUUID, prerenderAuthorizationCheck } from "../util/logic";
 import { Alert } from "@material-ui/lab";
+import { green, lightGreen } from "@material-ui/core/colors";
 
 const Collage = ({ images }) => {
   const router = useRouter();
@@ -21,7 +27,6 @@ const Collage = ({ images }) => {
     axios
       .get(`http://localhost:8080/collage/collageName/${collageUUID}`)
       .then((res) => {
-        console.log(res);
         setCollageName(res["data"]["collageName"]);
       });
   }, []);
@@ -46,15 +51,12 @@ const Collage = ({ images }) => {
   }, []);
 
   // file upload logic
-  let errorText = "File type not valid";
   const [isFileError, setIsFileError] = useState<boolean>(false);
   const [file, setFile] = useState(null);
 
   const imageTypes = ["png", "jpg", "jpeg"];
 
   const handleImageChange = (e) => {
-    // TODO: continue here
-    console.log("here");
     const fileName = e.target.files[0].name;
     const periodIdx = fileName.lastIndexOf(".");
 
@@ -74,36 +76,55 @@ const Collage = ({ images }) => {
 
       const userUUID: string = await getUserUUID();
 
-      await axios
-        .post(
-          `http://localhost:8080/images/create/${userUUID}/${collageUUID}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        )
-        .then((data) => console.log(data));
+      await axios.post(
+        `http://localhost:8080/images/create/${userUUID}/${collageUUID}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       setFile(null);
     }
   };
 
+  const [updated, setUpdated] = useState(false);
+  const greenTheme = createMuiTheme({
+    palette: { primary: lightGreen, secondary: green },
+  });
+
+  /*
+  useEffect(() => {
+    if (updated) {
+      
+    }
+  }, [updated]);
+     */
+
   //      <FileUpload collageUUID={uuid} />
   return (
     <div className="wrapper collage">
+      <MuiThemeProvider theme={greenTheme}>
+        <Button
+          disabled={!updated}
+          variant="contained"
+          color="primary"
+          style={{ position: "absolute", right: "5vw" }}
+        >
+          Updated
+        </Button>
+      </MuiThemeProvider>
       <div className="collageContent">
         <h1>{collageName}</h1>
         <Button variant="contained" component="label">
-          Choose Image
+          {file !== null && !isFileError
+            ? file.name
+            : isFileError
+            ? "Invalid filetype"
+            : "Choose Image"}
           <input type="file" hidden onChange={handleImageChange} />
-          {isFileError && (
-            <Alert key={errorText} severity="error">
-              {errorText}
-            </Alert>
-          )}
         </Button>
-
         <Button
           disabled={isFileError || file == null}
           onClick={submitImage}
@@ -115,10 +136,8 @@ const Collage = ({ images }) => {
       </div>
       <Box>
         <br />
-
         <div
           style={{
-            //          display: "relative",
             border: "1px solid black",
             width: "90vw",
             height: "90vh",
@@ -136,6 +155,8 @@ const Collage = ({ images }) => {
               leftBound={leftBound}
               screenWidth={screenWidth}
               screenHeight={screenHeight}
+              updated={updated}
+              setUpdated={setUpdated}
             />
           ))}
         </div>

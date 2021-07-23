@@ -31,17 +31,15 @@ const FileUpload = ({ collageUUID }) => {
 
     const userUUID: string = await getUserUUID();
 
-    await axios
-      .post(
-        `http://localhost:8080/images/create/${userUUID}/${collageUUID}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      )
-      .then((data) => console.log(data));
+    await axios.post(
+      `http://localhost:8080/images/create/${userUUID}/${collageUUID}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     setFile(null);
   };
 

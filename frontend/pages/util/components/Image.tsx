@@ -20,6 +20,8 @@ const Image: React.FC<ImageInterface> = ({
   bottomBound,
   screenWidth,
   screenHeight,
+  updated,
+  setUpdated,
 }) => {
   // websockets client
   const socket = io("http://localhost:5001");
@@ -40,11 +42,12 @@ const Image: React.FC<ImageInterface> = ({
 
   const valueRef = useRef(values);
   const [isResizing, setIsResizing] = useState<boolean>(false);
-  let imageUpdated: boolean = false;
+  // let imageUpdated: boolean = false;
+  const [imageUpdated, setImageUpdated] = useState(false);
 
   // southwest
   const swOnMouseDown = (e) => {
-    imageUpdated = true;
+    setImageUpdated(true);
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -82,7 +85,7 @@ const Image: React.FC<ImageInterface> = ({
 
   // southeast
   const seOnMouseDown = (e) => {
-    imageUpdated = true;
+    setImageUpdated(true);
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -116,7 +119,7 @@ const Image: React.FC<ImageInterface> = ({
 
   // northeast
   const neOnMouseDown = (e) => {
-    imageUpdated = true;
+    setImageUpdated(true);
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -152,7 +155,7 @@ const Image: React.FC<ImageInterface> = ({
 
   // northwest
   const nwOnMouseDown = (e) => {
-    imageUpdated = true;
+    setImageUpdated(true);
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -190,7 +193,7 @@ const Image: React.FC<ImageInterface> = ({
 
   // dragging
   const dragOnMouseDown = (e) => {
-    imageUpdated = true;
+    setImageUpdated(true);
     if (!isResizing) {
       window.addEventListener("mousemove", dragMouseMove);
       window.addEventListener("mouseup", dragMouseUp);
@@ -231,6 +234,7 @@ const Image: React.FC<ImageInterface> = ({
     x,
     y,
     rot,
+    zIndex,
   }: UpdateImageFuncInterface) => {
     const updatedImage = {
       imageID: id,
@@ -239,13 +243,20 @@ const Image: React.FC<ImageInterface> = ({
       posX: x,
       posY: y,
       rot,
-      zindex: myZIndex,
+      zindex: zIndex,
     };
     socket.emit("PUT/image", updatedImage);
+    setUpdated(true);
+    setTimeout(() => {
+      setUpdated(false);
+      setImageUpdated(false);
+    }, 1000);
   };
 
   // calling websockets everytime
-  const intervalLength: number = 1000;
+  /*
+  // const intervalLength: number = 1000;
+  const intervalLength: number = 1;
   const putInterval = setInterval(() => {
     if (imageUpdated) {
       const rect = draggableRef.current.getBoundingClientRect();
@@ -256,11 +267,30 @@ const Image: React.FC<ImageInterface> = ({
         x: rect.left / screenWidth,
         y: rect.top / screenHeight,
         rot,
+        zIndex: myZIndex,
       };
       updateImage(input);
       imageUpdated = false;
     }
   }, intervalLength);
+     */
+
+  useEffect(() => {
+    if (imageUpdated) {
+      const rect = draggableRef.current.getBoundingClientRect();
+      const input: UpdateImageFuncInterface = {
+        id,
+        width: rect.width / screenWidth,
+        height: rect.height / screenHeight,
+        x: rect.left / screenWidth,
+        y: rect.top / screenHeight,
+        rot,
+        zIndex: myZIndex,
+      };
+      updateImage(input);
+      //imageUpdated = false;
+    }
+  }, [imageUpdated]);
 
   let styles;
   if (valueRef.current.curWidth == -1 || valueRef.current.curWidth == -1) {
@@ -296,12 +326,12 @@ const Image: React.FC<ImageInterface> = ({
   }, []);
 
   const incrementZIndex = () => {
-    imageUpdated = true;
     setMyZIndex(myZIndex + 1);
+    setImageUpdated(true);
   };
   const decrementZIndex = () => {
-    imageUpdated = true;
     setMyZIndex(Math.max(1, myZIndex - 1));
+    setImageUpdated(true);
   };
 
   return (

@@ -47,10 +47,8 @@ public class CollageController {
     public HashMap<String, String> getCollageName(@PathVariable(value = "collageUUID") String collageUUID)
             throws ProjectNotFoundException {
         String collageName = this.collageRepo.findCollageNameByCollageUUID(collageUUID);
-        System.out.println(collageName);
         HashMap<String, String> res = new HashMap<String, String>();
         res.put("collageName", collageName);
-        System.out.println(res);
         return res;
         // return ResponseEntity.ok().body(collageName);
     }

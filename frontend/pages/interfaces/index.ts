@@ -18,6 +18,8 @@ export interface ImageInterface {
   screenHeight?: number;
   updateBool?: boolean;
   updateCount?: number;
+  updated?: boolean;
+  setUpdated?: () => void;
 }
 
 export interface ImageStyleInterface {

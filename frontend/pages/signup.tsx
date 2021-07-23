@@ -5,8 +5,6 @@ import { Alert } from "@material-ui/lab";
 import React, { useState, Fragment } from "react";
 import FormInput from "./util/components/FormInput";
 
-// import "../styles/Account.css";
-
 const SignUp = () => {
   const router = useRouter();
 

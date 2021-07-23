@@ -19,8 +19,6 @@ const Projects = ({ collages }) => {
   // model variables
   const [open, setOpen] = useState<boolean>(false);
 
-  console.log(collages);
-
   // get userUUID
   const router = useRouter();
   const { userUUID } = router.query;

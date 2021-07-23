@@ -19,7 +19,6 @@ export const authorizeUser = async (): Promise<boolean> => {
         isAuthorized = true;
       }
     });
-  console.log(isAuthorized);
 
   return isAuthorized;
 };
@@ -41,26 +40,8 @@ export const getUserUUID = async () => {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       userUUID = data["accounts"][0].uuid;
-      console.log(userUUID);
     });
 
   return userUUID;
 };
-
-/*
-export const socketSend = (socket) => {
-  for (let i = 0; i < 5; i++) {
-    console.log("Try #" + i);
-    try {
-      console.log("sending");
-      socket.send("/app/test");
-      break;
-    } catch (err) {
-      console.log("sleeping");
-      sleep(1000);
-    }
-  }
-};
-*/

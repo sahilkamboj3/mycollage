@@ -88,7 +88,6 @@ createConnection({
     });
 
     io.on("connection", (socket: Socket) => {
-      console.log("Socket connected");
       socket.on("PUT/image", (image) => {
         fetch(`http://localhost:8080/images/${image.imageID}`, {
           method: "PUT",

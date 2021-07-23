@@ -4,8 +4,11 @@ import Head from "next/head";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../src/theme";
+import "../styles/General.css";
 import "../styles/Image.css";
 import "../styles/Account.css";
+import "../styles/Collage.css";
+import "../styles/Project.css";
 import { CookiesProvider } from "react-cookie";
 
 export default function MyApp(props) {
