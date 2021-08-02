@@ -60,7 +60,6 @@ public class ImageController {
 
     // post mappings
     @PostMapping("create/{userUUID}/{collageUUID}")
-
     public ResponseEntity<Image> createImage(@RequestParam("file") MultipartFile file,
             @PathVariable("userUUID") String userUUID, @PathVariable("collageUUID") String collageUUID)
             throws IOException {

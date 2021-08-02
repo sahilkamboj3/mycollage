@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -23,8 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class S3StorageService {
     private final Region region = Region.US_WEST_1;
     private final String bucketName = "mycollageimages";
+    // private final AmazonS3ClientBuilder builder =
+    // AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_1)
+    // .withCredentials(new ProfileCredentialsProvider());
     private final AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_1)
-            .withCredentials(new ProfileCredentialsProvider());
+            .withCredentials(DefaultAWSCredentialsProviderChain.getInstance());
+
     private final String BASE_AWS_IMAGE_URL = "https://s3.console.aws.amazon.com/s3/object/mycollageimages?region=us-west-1&prefix=";
 
     private static AmazonS3 s3;

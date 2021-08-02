@@ -4,6 +4,7 @@ import { Box, Typography, Button } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import React, { useState, Fragment } from "react";
 import FormInput from "./util/components/FormInput";
+import { NODE_BACKEND_SERVER } from "../config";
 
 const Login = () => {
   const router = useRouter();
@@ -22,7 +23,8 @@ const Login = () => {
   const loginAccount = () => {
     setErrors([]);
     setVerifying(true);
-    fetch("http://localhost:5000/accounts/login", {
+    // fetch("http://localhost:5000/accounts/login", {
+    fetch(`${NODE_BACKEND_SERVER}/accounts/login`, {
       method: "POST",
       credentials: "include",
       headers: {

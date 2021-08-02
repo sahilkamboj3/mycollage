@@ -14,6 +14,7 @@ import { ImageInterface, ServerSideImageInterface } from "../interfaces";
 import { getUserUUID, prerenderAuthorizationCheck } from "../util/logic";
 import { Alert } from "@material-ui/lab";
 import { green, lightGreen } from "@material-ui/core/colors";
+import { JAVA_BACKEND_SERVER } from "../../config";
 
 const Collage = ({ images }) => {
   const router = useRouter();
@@ -25,7 +26,8 @@ const Collage = ({ images }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/collage/collageName/${collageUUID}`)
+      //.get(`http://localhost:8080/collage/collageName/${collageUUID}`)
+      .get(`${JAVA_BACKEND_SERVER}/collage/collageName/${collageUUID}`)
       .then((res) => {
         setCollageName(res["data"]["collageName"]);
       });
@@ -169,7 +171,8 @@ export async function getServerSideProps(context) {
   // fetch images for this collage
   let images: ImageInterface[];
 
-  await fetch(`http://localhost:8080/images/getAll/${context.params.uuid}`, {
+  //await fetch(`http://localhost:8080/images/getAll/${context.params.uuid}`, {
+  await fetch(`${JAVA_BACKEND_SERVER}/images/getAll/${context.params.uuid}`, {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",

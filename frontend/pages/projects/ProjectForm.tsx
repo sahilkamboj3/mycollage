@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import FormInput from "../util/components/FormInput";
 import { Button } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
+import { JAVA_BACKEND_SERVER } from "../../config";
 
 const ProjectForm = ({ userUUID }) => {
   const router = useRouter();
@@ -22,7 +23,8 @@ const ProjectForm = ({ userUUID }) => {
 
   // submit form
   const submitCollage = async () => {
-    await fetch("http://localhost:8080/collage/create", {
+    //await fetch("http://localhost:8080/collage/create", {
+    await fetch(`${JAVA_BACKEND_SERVER}/collage/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +33,8 @@ const ProjectForm = ({ userUUID }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        router.push(`http://localhost:3000/collages/${data["projectUUID"]}`);
+        //router.push(`http://localhost:3000/collages/${data["projectUUID"]}`);
+        router.push(`/collages/${data["projectUUID"]}`);
       });
   };
 

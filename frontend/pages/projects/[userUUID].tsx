@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 import ProjectForm from "./ProjectForm";
+import { JAVA_BACKEND_SERVER } from "../../config";
 
 const Projects = ({ collages }) => {
   // model variables
@@ -115,7 +116,8 @@ export async function getServerSideProps(context) {
   // fetch request for collages
   let collages: CollageInterface[];
   await fetch(
-    `http://localhost:8080/collage/getAll/${context.params.userUUID}`,
+    //`http://localhost:8080/collage/getAll/${context.params.userUUID}`,
+    `${JAVA_BACKEND_SERVER}/collage/getAll/${context.params.userUUID}`,
     {
       credentials: "include",
       headers: {

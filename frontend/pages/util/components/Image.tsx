@@ -3,6 +3,7 @@ import { UpdateImageFuncInterface } from "../../interfaces";
 import { io } from "socket.io-client";
 
 import { ImageInterface } from "../interfaces";
+import { JAVA_BACKEND_SERVER, SOCKET_SERVER } from "../../../config";
 
 const Image: React.FC<ImageInterface> = ({
   id,
@@ -24,7 +25,8 @@ const Image: React.FC<ImageInterface> = ({
   setUpdated,
 }) => {
   // websockets client
-  const socket = io("http://localhost:5001");
+  //const socket = io("http://localhost:5001");
+  const socket = io(SOCKET_SERVER);
   socket.on("connect", () => {});
   socket.on("disconnect", () => {});
 
@@ -47,7 +49,6 @@ const Image: React.FC<ImageInterface> = ({
 
   // southwest
   const swOnMouseDown = (e) => {
-    setImageUpdated(true);
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -77,6 +78,7 @@ const Image: React.FC<ImageInterface> = ({
     }
 
     function swOnMouseUp(e) {
+      setImageUpdated(true);
       window.removeEventListener("mousemove", swOnMouseMove);
       window.removeEventListener("mouseup", swOnMouseUp);
       setIsResizing(false);
@@ -85,7 +87,6 @@ const Image: React.FC<ImageInterface> = ({
 
   // southeast
   const seOnMouseDown = (e) => {
-    setImageUpdated(true);
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -111,6 +112,7 @@ const Image: React.FC<ImageInterface> = ({
     }
 
     function seOnMouseUp(e) {
+      setImageUpdated(true);
       window.removeEventListener("mousemove", seOnMouseMove);
       window.removeEventListener("mouseup", seOnMouseUp);
       setIsResizing(false);
@@ -119,7 +121,6 @@ const Image: React.FC<ImageInterface> = ({
 
   // northeast
   const neOnMouseDown = (e) => {
-    setImageUpdated(true);
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -147,6 +148,7 @@ const Image: React.FC<ImageInterface> = ({
     }
 
     function neOnMouseUp(e) {
+      setImageUpdated(true);
       window.removeEventListener("mousemove", neOnMouseMove);
       window.removeEventListener("mouseup", neOnMouseUp);
       setIsResizing(false);
@@ -155,7 +157,6 @@ const Image: React.FC<ImageInterface> = ({
 
   // northwest
   const nwOnMouseDown = (e) => {
-    setImageUpdated(true);
     setIsResizing(true);
     prevX = e.clientX;
     prevY = e.clientY;
@@ -185,6 +186,7 @@ const Image: React.FC<ImageInterface> = ({
     }
 
     function nwOnMouseUp(e) {
+      setImageUpdated(true);
       window.removeEventListener("mousemove", nwOnMouseMove);
       window.removeEventListener("mouseup", nwOnMouseUp);
       setIsResizing(false);
@@ -193,7 +195,6 @@ const Image: React.FC<ImageInterface> = ({
 
   // dragging
   const dragOnMouseDown = (e) => {
-    setImageUpdated(true);
     if (!isResizing) {
       window.addEventListener("mousemove", dragMouseMove);
       window.addEventListener("mouseup", dragMouseUp);
@@ -221,6 +222,7 @@ const Image: React.FC<ImageInterface> = ({
       }
 
       function dragMouseUp(e) {
+        setImageUpdated(true);
         window.removeEventListener("mousemove", dragMouseMove);
         window.removeEventListener("mouseup", dragMouseUp);
       }
@@ -247,33 +249,12 @@ const Image: React.FC<ImageInterface> = ({
     };
     socket.emit("PUT/image", updatedImage);
     setUpdated(true);
+    setImageUpdated(false);
     setTimeout(() => {
       setUpdated(false);
-      setImageUpdated(false);
+      //setImageUpdated(false);
     }, 1000);
   };
-
-  // calling websockets everytime
-  /*
-  // const intervalLength: number = 1000;
-  const intervalLength: number = 1;
-  const putInterval = setInterval(() => {
-    if (imageUpdated) {
-      const rect = draggableRef.current.getBoundingClientRect();
-      const input: UpdateImageFuncInterface = {
-        id,
-        width: rect.width / screenWidth,
-        height: rect.height / screenHeight,
-        x: rect.left / screenWidth,
-        y: rect.top / screenHeight,
-        rot,
-        zIndex: myZIndex,
-      };
-      updateImage(input);
-      imageUpdated = false;
-    }
-  }, intervalLength);
-     */
 
   useEffect(() => {
     if (imageUpdated) {
@@ -312,7 +293,8 @@ const Image: React.FC<ImageInterface> = ({
 
   const [presignedUrl, setPresignedUrl] = useState<string>("");
   useEffect(() => {
-    fetch("http://localhost:8080/images/getPresignedUrl", {
+    //fetch("http://localhost:8080/images/getPresignedUrl", {
+    fetch(`${JAVA_BACKEND_SERVER}/images/getPresignedUrl`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
-    "start": "nodemon dist/index.js"
+    "nstart": "nodemon dist/index.js",
+    "start:ts": "ts-node --transpile-only src/index.ts",
+    "start:js": "cd dist && node index.js"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +26,7 @@
     "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.1.3",
+    "ts-node": "^10.1.0",
     "typeorm": "^0.2.31",
     "typescript": "^4.2.2",
     "uuid": "^8.3.2"

@@ -1,0 +1,47 @@
+version: "3"
+services:
+    postgres:
+        ports:
+            - "5432:5432"
+        image: postgres
+        volumes: 
+            - pgdata:/var/lib/postgresql/data
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "lovebread3"
+            POSTGRES_DB: "mycollage"
+    redis:
+        ports:
+            - "6379:6379"
+        image: redis
+    aws:
+        image: amazon/aws-cli
+        command: s3 ls
+        volumes:
+            - ~/.aws:/root/.aws
+    java:
+        ports:
+            - "8080:8080"
+        #image: mycollage-java-backend:1.0
+        image: 726368172767.dkr.ecr.us-west-1.amazonaws.com/mycollage-java-backend
+        environment:
+            - AWS_ACCESS_KEY_ID=AKIA2SHXKXLPTRNAQSMS
+            - AWS_SECRET_ACCESS_KEY=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
+            - AWS_REGION=us-west-1
+        depends_on:
+            - postgres
+            - redis
+            - aws
+    js:
+        ports:
+            - "5000:5000"
+            - "5001:5001"
+        # image: mycollage-js-backend:1.0
+        image: 726368172767.dkr.ecr.us-west-1.amazonaws.com/mycollage-js-backend
+        depends_on:
+            - postgres
+            - redis
+            - java
+volumes:
+    pgdata:
+        external: true

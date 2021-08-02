@@ -13,7 +13,24 @@ import fetch from "node-fetch";
 
 import accountApi from "./Account/api";
 import { Account } from "./entity/Account";
+import {
+  DB_PASSWORD,
+  DB_NAME,
+  DB_TYPE,
+  DB_HOST,
+  DB_PORT,
+  DB_USERNAME,
+} from "./config/db";
+import { REDIS_PORT, REDIS_HOST } from "./config/redis";
+import {
+  SESSIONS_IS_SECURE,
+  SESSIONS_MAX_AGE,
+  SESSIONS_SECRET,
+} from "./config/sessions";
+import { CORS_FRONTEND_URI } from "./config/cors";
+import { JAVA_BACKEND_SERVER } from "./config";
 
+/*
 createConnection({
   type: "postgres",
   host: "localhost",
@@ -25,16 +42,30 @@ createConnection({
   synchronize: true,
   logging: false,
 })
+*/
+createConnection({
+  type: DB_TYPE,
+  host: DB_HOST,
+  port: DB_PORT,
+  username: DB_USERNAME,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  entities: [Account],
+  synchronize: true,
+  logging: false,
+})
+  //.then(async (connection) => {
   .then(async (connection) => {
     console.log("Postgres connection established");
 
     const app = express();
     let redisClient = redis.createClient({
-      port: 6379,
-      host: "localhost",
+      port: REDIS_PORT,
+      host: REDIS_HOST,
     });
+
     const corsOptions = {
-      origin: "http://localhost:3000",
+      origin: CORS_FRONTEND_URI,
       credentials: true,
     };
 
@@ -51,12 +82,12 @@ createConnection({
         store: new redisStore({
           client: redisClient,
         }),
-        secret: "mycollage",
+        secret: SESSIONS_SECRET,
         saveUninitialized: false,
         resave: false,
         cookie: {
-          secure: false, // allows transmission over HTTP
-          maxAge: 1000 * 60 * 60 * 12, // 12 hours
+          secure: SESSIONS_IS_SECURE, // allows transmission over HTTP
+          maxAge: SESSIONS_MAX_AGE, // 12 hours
         },
       })
     );
@@ -83,13 +114,14 @@ createConnection({
 
     const io = require("socket.io")(httpServer, {
       cors: {
-        origin: "http://localhost:3000",
+        origin: CORS_FRONTEND_URI,
       },
     });
 
     io.on("connection", (socket: Socket) => {
       socket.on("PUT/image", (image) => {
-        fetch(`http://localhost:8080/images/${image.imageID}`, {
+        console.log("Socket PUT/image request received...");
+        fetch(`${JAVA_BACKEND_SERVER}/images/${image.imageID}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import { getUserUUID, prerenderAuthorizationCheck } from "../logic";
 import { useRouter } from "next/router";
+import { JAVA_BACKEND_SERVER } from "../../../config";
 
 const FileUpload = ({ collageUUID }) => {
   let errorText = "File type not valid";
@@ -32,7 +33,7 @@ const FileUpload = ({ collageUUID }) => {
     const userUUID: string = await getUserUUID();
 
     await axios.post(
-      `http://localhost:8080/images/create/${userUUID}/${collageUUID}`,
+      `${JAVA_BACKEND_SERVER}/images/create/${userUUID}/${collageUUID}`,
       formData,
       {
         headers: {

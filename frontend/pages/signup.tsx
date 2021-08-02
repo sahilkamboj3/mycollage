@@ -4,6 +4,7 @@ import { Box, Typography, Button } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import React, { useState, Fragment } from "react";
 import FormInput from "./util/components/FormInput";
+import { NODE_BACKEND_SERVER } from "../config";
 
 const SignUp = () => {
   const router = useRouter();
@@ -36,7 +37,8 @@ const SignUp = () => {
 
   const signUpAccount = () => {
     setVerifying(true);
-    fetch("http://localhost:5000/accounts/create", {
+    // fetch('http://localhost:5000/accounts/create", {
+    fetch(`${NODE_BACKEND_SERVER}/accounts/create`, {
       method: "POST",
       credentials: "include",
       headers: {
