@@ -25,9 +25,9 @@ services:
         #image: mycollage-java-backend:1.0
         image: 726368172767.dkr.ecr.us-west-1.amazonaws.com/mycollage-java-backend
         environment:
-            - AWS_ACCESS_KEY_ID=AKIA2SHXKXLPTRNAQSMS
-            - AWS_SECRET_ACCESS_KEY=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
-            - AWS_REGION=us-west-1
+            - AWS_ACCESS_KEY_ID=
+            - AWS_SECRET_ACCESS_KEY=
+            - AWS_REGION=
         depends_on:
             - postgres
             - redis
@@ -37,7 +37,7 @@ services:
             - "5000:5000"
             - "5001:5001"
         # image: mycollage-js-backend:1.0
-        image: 726368172767.dkr.ecr.us-west-1.amazonaws.com/mycollage-js-backend
+        image: 
         depends_on:
             - postgres
             - redis
